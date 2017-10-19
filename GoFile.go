@@ -6,20 +6,21 @@ import (
 	"log"
 	"encoding/json"
 )
+
 func main() {
-	http.HandleFunc("/", login) //设置访问的路由
+	http.HandleFunc("/", login)              //设置访问的路由
 	err := http.ListenAndServe(":9090", nil) //设置监听的端口
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
-	http.HandleFunc("/login	", login) //设置访问的路由
+	http.HandleFunc("/login	", login)      //设置访问的路由
 	err1 := http.ListenAndServe(":9090", nil) //设置监听的端口
 	if err1 != nil {
 		log.Fatal("ListenAndServe: ", err1)
 	}
 }
-func login(w http.ResponseWriter, req *http.Request)  {
-
+func login(w http.ResponseWriter, req *http.Request) {
+	//http://localhost:9090/login?userName=oslanka&passWord=123456
 	//获取客户端通过GET/POST方式传递的参数
 	req.ParseForm()
 	param_userName, found1 := req.Form["userName"]
@@ -40,6 +41,9 @@ func login(w http.ResponseWriter, req *http.Request)  {
 	if userName == "oslanka" && password == "123456" {
 		result.Code = 100
 		result.Message = "登录成功"
+		d1 := Data{"1", "1"}
+		d2 := Data{"2", "2"}
+		result.Data = []Data{d1, d2}
 	} else {
 		result.Code = 101
 		result.Message = "用户名或密码不正确"
@@ -52,8 +56,12 @@ func login(w http.ResponseWriter, req *http.Request)  {
 
 type BaseJsonBean struct {
 	Code    int         `json:"code"`
-	Data    interface{} `json:"data"`
 	Message string      `json:"message"`
+	Data    interface{} `json:"data"`
+}
+type Data struct {
+	Name string `json:"name"`
+	Age  string `json:"age"`
 }
 
 func NewBaseJsonBean() *BaseJsonBean {
